@@ -46,14 +46,14 @@ const Index = ({ issuerDetails }: IndexProps) => {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-10">
-        <div className="grid lg:grid-cols-2 gap-10">
-          <div>
-            <InvoiceForm onGenerate={handleGenerateInvoice} initialData={defaultInvoiceData} />
-          </div>
-          <div>
-            <InvoicePreview data={invoiceData} issuerDetails={issuerDetails} />
-          </div>
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <InvoicePreview
+            data={invoiceData}
+            issuerDetails={issuerDetails}
+            onUpdate={handleGenerateInvoice}
+            editable={true}
+          />
         </div>
       </main>
     </div>
