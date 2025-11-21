@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 
 export interface InvoiceData {
@@ -34,16 +33,17 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onGenerate(formData);
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({
+    const updatedData = {
       ...formData,
       [e.target.name]: e.target.value,
-    });
+    };
+    setFormData(updatedData);
+    onGenerate(updatedData);
   };
 
   return (
@@ -130,10 +130,6 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
               required
             />
           </div>
-
-          <Button type="submit" className="w-full">
-            Generate Invoice
-          </Button>
         </form>
       </CardContent>
     </Card>
