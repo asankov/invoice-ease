@@ -83,22 +83,30 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
               <thead className="bg-muted">
                 <tr>
                   <th className="text-left p-4 font-semibold">Description</th>
-                  <th className="text-right p-4 font-semibold">Amount</th>
+                  <th className="text-center p-4 font-semibold">Quantity</th>
+                  <th className="text-right p-4 font-semibold">Price</th>
+                  <th className="text-right p-4 font-semibold">Total</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-border">
-                  <td className="p-4">Professional Services</td>
-                  <td className="p-4 text-right font-medium">
-                    ${parseFloat(data.paymentAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </td>
-                </tr>
+                {data.items.map((item, index) => (
+                  <tr key={index} className="border-t border-border">
+                    <td className="p-4">{item.description}</td>
+                    <td className="p-4 text-center">{item.quantity}</td>
+                    <td className="p-4 text-right">
+                      ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
+                    <td className="p-4 text-right font-medium">
+                      ${item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
               <tfoot className="border-t-2 border-border bg-muted/50">
                 <tr>
-                  <td className="p-4 font-bold text-lg">TOTAL</td>
+                  <td colSpan={3} className="p-4 font-bold text-lg">TOTAL</td>
                   <td className="p-4 text-right font-bold text-lg">
-                    ${parseFloat(data.paymentAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${data.items.reduce((sum, item) => sum + item.total, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
               </tfoot>

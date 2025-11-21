@@ -7,7 +7,10 @@ const defaultInvoiceData: InvoiceData = {
   clientName: "John Doe",
   clientNumber: "+1 234 567 8900",
   clientAddress: "123 Main Street\nCity, State, ZIP",
-  paymentAmount: "1000.00",
+  items: [
+    { description: "Professional Services", quantity: 10, price: 100, total: 1000 },
+    { description: "Consulting", quantity: 5, price: 150, total: 750 },
+  ],
   date: new Date().toISOString().split('T')[0],
 };
 
