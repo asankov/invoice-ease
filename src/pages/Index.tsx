@@ -5,11 +5,13 @@ import { InvoicePreview } from "@/components/InvoicePreview";
 const defaultInvoiceData: InvoiceData = {
   invoiceNumber: "INV-001",
   clientName: "John Doe",
+  clientNameSecondary: "",
   clientNumber: "+1 234 567 8900",
   clientAddress: "123 Main Street\nCity, State, ZIP",
+  clientAddressSecondary: "",
   items: [
-    { description: "Professional Services", quantity: 10, price: 100, total: 1000 },
-    { description: "Consulting", quantity: 5, price: 150, total: 750 },
+    { description: "Professional Services", descriptionSecondary: "", quantity: 10, price: 100, total: 1000 },
+    { description: "Consulting", descriptionSecondary: "", quantity: 5, price: 150, total: 750 },
   ],
   date: new Date().toISOString().split('T')[0],
 };

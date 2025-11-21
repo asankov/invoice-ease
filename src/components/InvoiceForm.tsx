@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Plus, Trash2 } from "lucide-react";
 
 export interface InvoiceItem {
   description: string;
+  descriptionSecondary?: string;
   quantity: number;
   price: number;
   total: number;
@@ -16,8 +18,10 @@ export interface InvoiceItem {
 export interface InvoiceData {
   invoiceNumber: string;
   clientName: string;
+  clientNameSecondary?: string;
   clientNumber: string;
   clientAddress: string;
+  clientAddressSecondary?: string;
   items: InvoiceItem[];
   date: string;
 }
@@ -32,9 +36,11 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
     initialData || {
       invoiceNumber: "",
       clientName: "",
+      clientNameSecondary: "",
       clientNumber: "",
       clientAddress: "",
-      items: [{ description: "", quantity: 1, price: 0, total: 0 }],
+      clientAddressSecondary: "",
+      items: [{ description: "", descriptionSecondary: "", quantity: 1, price: 0, total: 0 }],
       date: new Date().toISOString().split('T')[0],
     }
   );
@@ -77,7 +83,7 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
   const addItem = () => {
     const updatedData = {
       ...formData,
-      items: [...formData.items, { description: "", quantity: 1, price: 0, total: 0 }],
+      items: [...formData.items, { description: "", descriptionSecondary: "", quantity: 1, price: 0, total: 0 }],
     };
     setFormData(updatedData);
     onGenerate(updatedData);
@@ -103,6 +109,13 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <Tabs defaultValue="primary" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="primary">Primary Language</TabsTrigger>
+            <TabsTrigger value="secondary">Secondary Language</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="primary">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="invoiceNumber">Invoice Number</Label>
@@ -243,6 +256,58 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
             </div>
           </div>
         </form>
+          </TabsContent>
+
+          <TabsContent value="secondary">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="clientNameSecondary">Client Name (Secondary Language)</Label>
+            <Input
+              id="clientNameSecondary"
+              name="clientNameSecondary"
+              placeholder="Enter client name in secondary language"
+              value={formData.clientNameSecondary || ""}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="clientAddressSecondary">Client Address (Secondary Language)</Label>
+            <Textarea
+              id="clientAddressSecondary"
+              name="clientAddressSecondary"
+              placeholder="Enter client address in secondary language"
+              value={formData.clientAddressSecondary || ""}
+              onChange={handleChange}
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Item Descriptions (Secondary Language)</Label>
+            </div>
+            <div className="space-y-4">
+              {formData.items.map((item, index) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`descriptionSecondary-${index}`}>
+                      Item {index + 1} - {item.description || "Untitled"}
+                    </Label>
+                    <Input
+                      id={`descriptionSecondary-${index}`}
+                      placeholder="Enter item description in secondary language"
+                      value={item.descriptionSecondary || ""}
+                      onChange={(e) => handleItemChange(index, 'descriptionSecondary', e.target.value)}
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </form>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

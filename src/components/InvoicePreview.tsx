@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Download, Printer } from "lucide-react";
 import { InvoiceData } from "./InvoiceForm";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
@@ -18,6 +19,7 @@ const ISSUER_DETAILS = {
 
 export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
+  const [activeLanguage, setActiveLanguage] = useState<"primary" | "secondary">("primary");
 
   const handlePrint = () => {
     window.print();
@@ -27,20 +29,11 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
     window.print();
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-2 print:hidden">
-        <Button onClick={handlePrint} variant="outline" className="flex-1">
-          <Printer className="h-4 w-4 mr-2" />
-          Print
-        </Button>
-        <Button onClick={handleDownload} className="flex-1">
-          <Download className="h-4 w-4 mr-2" />
-          Download PDF
-        </Button>
-      </div>
+  const renderInvoiceContent = (language: "primary" | "secondary") => {
+    const clientName = language === "primary" ? data.clientName : (data.clientNameSecondary || data.clientName);
+    const clientAddress = language === "primary" ? data.clientAddress : (data.clientAddressSecondary || data.clientAddress);
 
-      <Card ref={printRef} className="w-full p-8 print:shadow-none">
+    return (
         <div className="space-y-8">
           {/* Header */}
           <div className="flex justify-between items-start border-b border-border pb-6">
@@ -62,8 +55,8 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground mb-2">BILL TO</h3>
               <div className="space-y-1">
-                <p className="font-medium">{data.clientName}</p>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">{data.clientAddress}</p>
+                <p className="font-medium">{clientName}</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{clientAddress}</p>
                 <p className="text-sm text-muted-foreground"><span className="font-bold" >Company reg. number:</span> {data.clientNumber}</p>
               </div>
             </div>
@@ -89,18 +82,21 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
                 </tr>
               </thead>
               <tbody>
-                {data.items.map((item, index) => (
-                  <tr key={index} className="border-t border-border">
-                    <td className="p-4">{item.description}</td>
-                    <td className="p-4 text-center">{item.quantity}</td>
-                    <td className="p-4 text-right">
-                      ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </td>
-                    <td className="p-4 text-right font-medium">
-                      ${item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </td>
-                  </tr>
-                ))}
+                {data.items.map((item, index) => {
+                  const itemDescription = language === "primary" ? item.description : (item.descriptionSecondary || item.description);
+                  return (
+                    <tr key={index} className="border-t border-border">
+                      <td className="p-4">{itemDescription}</td>
+                      <td className="p-4 text-center">{item.quantity}</td>
+                      <td className="p-4 text-right">
+                        ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="p-4 text-right font-medium">
+                        ${item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
               <tfoot className="border-t-2 border-border bg-muted/50">
                 <tr>
@@ -113,7 +109,40 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
             </table>
           </div>
         </div>
-      </Card>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2 print:hidden">
+        <Button onClick={handlePrint} variant="outline" className="flex-1">
+          <Printer className="h-4 w-4 mr-2" />
+          Print
+        </Button>
+        <Button onClick={handleDownload} className="flex-1">
+          <Download className="h-4 w-4 mr-2" />
+          Download PDF
+        </Button>
+      </div>
+
+      <Tabs defaultValue="primary" className="w-full" onValueChange={(value) => setActiveLanguage(value as "primary" | "secondary")}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="primary">Primary Language</TabsTrigger>
+          <TabsTrigger value="secondary">Secondary Language</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="primary">
+          <Card ref={printRef} className="w-full p-8 print:shadow-none">
+            {renderInvoiceContent("primary")}
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="secondary">
+          <Card className="w-full p-8 print:shadow-none">
+            {renderInvoiceContent("secondary")}
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
