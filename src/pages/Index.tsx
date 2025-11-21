@@ -1,6 +1,10 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 import { InvoiceForm, InvoiceData } from "@/components/InvoiceForm";
 import { InvoicePreview } from "@/components/InvoicePreview";
+import { IssuerDetails } from "./Admin";
 
 const defaultInvoiceData: InvoiceData = {
   invoiceNumber: "INV-001",
@@ -14,7 +18,11 @@ const defaultInvoiceData: InvoiceData = {
   date: new Date().toISOString().split('T')[0],
 };
 
-const Index = () => {
+interface IndexProps {
+  issuerDetails: IssuerDetails;
+}
+
+const Index = ({ issuerDetails }: IndexProps) => {
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(defaultInvoiceData);
 
   const handleGenerateInvoice = (data: InvoiceData) => {
@@ -22,13 +30,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <header className="backdrop-blur-sm bg-background/80 sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-8">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            Invoice Generator
-          </h1>
-          <p className="text-muted-foreground mt-2 text-lg">Create professional invoices in seconds</p>
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Invoice Generator</h1>
+            <p className="text-muted-foreground mt-1">Create professional invoices in seconds</p>
+          </div>
+          <Link to="/admin">
+            <Button variant="outline">
+              <Settings className="h-4 w-4 mr-2" />
+              Admin Panel
+            </Button>
+          </Link>
         </div>
       </header>
 
@@ -37,8 +51,8 @@ const Index = () => {
           <div>
             <InvoiceForm onGenerate={handleGenerateInvoice} initialData={defaultInvoiceData} />
           </div>
-          <div className="lg:sticky lg:top-32 lg:self-start">
-            <InvoicePreview data={invoiceData} />
+          <div>
+            <InvoicePreview data={invoiceData} issuerDetails={issuerDetails} />
           </div>
         </div>
       </main>

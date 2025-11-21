@@ -2,21 +2,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 import { InvoiceData } from "./InvoiceForm";
+import { IssuerDetails } from "../pages/Admin";
 import { useRef } from "react";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
+  issuerDetails: IssuerDetails;
 }
 
-const ISSUER_DETAILS = {
-  name: "Your Company Name",
-  address: "456 Business Ave, Suite 100",
-  city: "New York, NY 10001",
-  phone: "+1 (555) 123-4567",
-  email: "billing@yourcompany.com",
-};
-
-export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
+export const InvoicePreview = ({ data, issuerDetails }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
@@ -49,11 +43,11 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
               <p className="text-muted-foreground text-lg">#{data.invoiceNumber}</p>
             </div>
             <div className="text-right">
-              <h2 className="text-xl font-semibold mb-2">{ISSUER_DETAILS.name}</h2>
-              <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.address}</p>
-              <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.city}</p>
-              <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.phone}</p>
-              <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.email}</p>
+              <h2 className="text-xl font-semibold mb-1">{issuerDetails.name}</h2>
+              <p className="text-sm text-muted-foreground">{issuerDetails.address}</p>
+              <p className="text-sm text-muted-foreground">{issuerDetails.city}</p>
+              <p className="text-sm text-muted-foreground">{issuerDetails.phone}</p>
+              <p className="text-sm text-muted-foreground">{issuerDetails.email}</p>
             </div>
           </div>
 
