@@ -5,7 +5,7 @@ import { InvoiceData } from "./InvoiceForm";
 import { useRef } from "react";
 
 interface InvoicePreviewProps {
-  data: InvoiceData | null;
+  data: InvoiceData;
 }
 
 const ISSUER_DETAILS = {
@@ -26,17 +26,6 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
   const handleDownload = () => {
     window.print();
   };
-
-  if (!data) {
-    return (
-      <Card className="w-full h-full flex items-center justify-center min-h-[600px]">
-        <div className="text-center text-muted-foreground">
-          <FileText className="h-16 w-16 mx-auto mb-4 opacity-50" />
-          <p>Fill in the form to generate an invoice</p>
-        </div>
-      </Card>
-    );
-  }
 
   return (
     <div className="space-y-4">

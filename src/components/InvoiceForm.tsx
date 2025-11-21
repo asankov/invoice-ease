@@ -17,17 +17,20 @@ export interface InvoiceData {
 
 interface InvoiceFormProps {
   onGenerate: (data: InvoiceData) => void;
+  initialData?: InvoiceData;
 }
 
-export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
-  const [formData, setFormData] = useState<InvoiceData>({
-    invoiceNumber: "",
-    clientName: "",
-    clientNumber: "",
-    clientAddress: "",
-    paymentAmount: "",
-    date: new Date().toISOString().split('T')[0],
-  });
+export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
+  const [formData, setFormData] = useState<InvoiceData>(
+    initialData || {
+      invoiceNumber: "",
+      clientName: "",
+      clientNumber: "",
+      clientAddress: "",
+      paymentAmount: "",
+      date: new Date().toISOString().split('T')[0],
+    }
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
