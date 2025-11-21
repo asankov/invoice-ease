@@ -62,17 +62,17 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
             <div className="p-5 rounded-xl bg-muted/30">
               <h3 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Bill To</h3>
               <div className="space-y-1">
-                <p className="font-semibold text-lg">{data.clientName}</p>
-                <p className="text-sm text-muted-foreground">{data.clientNumber}</p>
+                <p className="font-medium">{data.clientName}</p>
                 <p className="text-sm text-muted-foreground whitespace-pre-line">{data.clientAddress}</p>
+                <p className="text-sm text-muted-foreground"><span className="font-bold" >Company reg. number:</span> {data.clientNumber}</p>
               </div>
             </div>
-            <div className="p-5 rounded-xl bg-muted/30 text-right">
-              <h3 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Invoice Date</h3>
-              <p className="font-semibold text-lg">{new Date(data.date).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            <div className="text-right">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-2">INVOICE DATE</h3>
+              <p className="font-medium">{new Date(data.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}</p>
             </div>
           </div>
