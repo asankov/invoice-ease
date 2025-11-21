@@ -112,13 +112,6 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
               </tfoot>
             </table>
           </div>
-
-          {/* Footer */}
-          <div className="pt-8 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              Thank you for your business!
-            </p>
-          </div>
         </div>
       </Card>
     </div>
