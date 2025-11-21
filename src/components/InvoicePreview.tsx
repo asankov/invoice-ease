@@ -41,12 +41,12 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
         ...updatedItems[index],
         [field]: value,
       };
-      
+
       // Recalculate total if quantity or price changed
       if (field === 'quantity' || field === 'price') {
         updatedItems[index].total = updatedItems[index].quantity * updatedItems[index].price;
       }
-      
+
       onUpdate({
         ...data,
         items: updatedItems,
@@ -72,9 +72,9 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
     }
   };
 
-  const EditableField = ({ value, onChange, className = "", multiline = false, type = "text" }: { 
-    value: string | number; 
-    onChange: (value: string) => void; 
+  const EditableField = ({ value, onChange, className = "", multiline = false, type = "text" }: {
+    value: string | number;
+    onChange: (value: string) => void;
     className?: string;
     multiline?: boolean;
     type?: string;
@@ -279,13 +279,6 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
               </Button>
             </div>
           )}
-
-          {/* Footer */}
-          <div className="pt-8 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              Thank you for your business!
-            </p>
-          </div>
         </div>
       </Card>
     </div>
