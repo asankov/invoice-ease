@@ -2,8 +2,17 @@ import { useState } from "react";
 import { InvoiceForm, InvoiceData } from "@/components/InvoiceForm";
 import { InvoicePreview } from "@/components/InvoicePreview";
 
+const defaultInvoiceData: InvoiceData = {
+  invoiceNumber: "INV-001",
+  clientName: "John Doe",
+  clientNumber: "+1 234 567 8900",
+  clientAddress: "123 Main Street\nCity, State, ZIP",
+  paymentAmount: "1000.00",
+  date: new Date().toISOString().split('T')[0],
+};
+
 const Index = () => {
-  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>(defaultInvoiceData);
 
   const handleGenerateInvoice = (data: InvoiceData) => {
     setInvoiceData(data);
@@ -23,7 +32,7 @@ const Index = () => {
       <main className="container mx-auto px-6 py-10">
         <div className="grid lg:grid-cols-2 gap-10">
           <div>
-            <InvoiceForm onGenerate={handleGenerateInvoice} />
+            <InvoiceForm onGenerate={handleGenerateInvoice} initialData={defaultInvoiceData} />
           </div>
           <div className="lg:sticky lg:top-32 lg:self-start">
             <InvoicePreview data={invoiceData} />
