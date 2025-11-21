@@ -3,14 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, Plus, Trash2 } from "lucide-react";
+
+export interface InvoiceItem {
+  description: string;
+  quantity: number;
+  price: number;
+  total: number;
+}
 
 export interface InvoiceData {
   invoiceNumber: string;
   clientName: string;
   clientNumber: string;
   clientAddress: string;
-  paymentAmount: string;
+  items: InvoiceItem[];
   date: string;
 }
 
@@ -26,7 +34,7 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
       clientName: "",
       clientNumber: "",
       clientAddress: "",
-      paymentAmount: "",
+      items: [{ description: "", quantity: 1, price: 0, total: 0 }],
       date: new Date().toISOString().split('T')[0],
     }
   );
@@ -44,6 +52,46 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
     };
     setFormData(updatedData);
     onGenerate(updatedData);
+  };
+
+  const handleItemChange = (index: number, field: keyof InvoiceItem, value: string | number) => {
+    const updatedItems = [...formData.items];
+    updatedItems[index] = {
+      ...updatedItems[index],
+      [field]: value,
+    };
+    
+    // Recalculate total if quantity or price changed
+    if (field === 'quantity' || field === 'price') {
+      updatedItems[index].total = updatedItems[index].quantity * updatedItems[index].price;
+    }
+    
+    const updatedData = {
+      ...formData,
+      items: updatedItems,
+    };
+    setFormData(updatedData);
+    onGenerate(updatedData);
+  };
+
+  const addItem = () => {
+    const updatedData = {
+      ...formData,
+      items: [...formData.items, { description: "", quantity: 1, price: 0, total: 0 }],
+    };
+    setFormData(updatedData);
+    onGenerate(updatedData);
+  };
+
+  const removeItem = (index: number) => {
+    if (formData.items.length > 1) {
+      const updatedData = {
+        ...formData,
+        items: formData.items.filter((_, i) => i !== index),
+      };
+      setFormData(updatedData);
+      onGenerate(updatedData);
+    }
   };
 
   return (
@@ -127,18 +175,81 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentAmount" className="text-sm font-medium">Payment Amount</Label>
-            <Input
-              id="paymentAmount"
-              name="paymentAmount"
-              type="number"
-              step="0.01"
-              placeholder="1000.00"
-              value={formData.paymentAmount}
-              onChange={handleChange}
-              required
-              className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-            />
+            <div className="flex items-center justify-between">
+              <Label>Items</Label>
+              <Button type="button" onClick={addItem} size="sm" variant="outline">
+                <Plus className="h-4 w-4 mr-1" />
+                Add Item
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {formData.items.map((item, index) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 space-y-2">
+                        <Label htmlFor={`description-${index}`}>Description</Label>
+                        <Input
+                          id={`description-${index}`}
+                          placeholder="Item description"
+                          value={item.description}
+                          onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                          required
+                        />
+                      </div>
+                      {formData.items.length > 1 && (
+                        <Button
+                          type="button"
+                          onClick={() => removeItem(index)}
+                          size="sm"
+                          variant="ghost"
+                          className="mt-7"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="space-y-2">
+                        <Label htmlFor={`quantity-${index}`}>Quantity</Label>
+                        <Input
+                          id={`quantity-${index}`}
+                          type="number"
+                          min="1"
+                          placeholder="1"
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`price-${index}`}>Price</Label>
+                        <Input
+                          id={`price-${index}`}
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          value={item.price}
+                          onChange={(e) => handleItemChange(index, 'price', parseFloat(e.target.value) || 0)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`total-${index}`}>Total</Label>
+                        <Input
+                          id={`total-${index}`}
+                          type="number"
+                          value={item.total.toFixed(2)}
+                          disabled
+                          className="bg-muted"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </form>
       </CardContent>
