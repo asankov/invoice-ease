@@ -2,13 +2,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Download, Printer, Plus, Trash2, Users } from "lucide-react";
+import { Download, Printer, Plus, Trash2, Users, Package } from "lucide-react";
 import { InvoiceData, InvoiceItem } from "./InvoiceForm";
 import { IssuerDetails } from "../pages/Admin";
 import { useRef, useState } from "react";
 import { toDate } from "date-fns";
 import { CustomerSelectionDialog } from "./CustomerSelectionDialog";
-import { Customer } from "@/client/DataClient";
+import { ItemSelectionDialog } from "./ItemSelectionDialog";
+import { Customer, ItemTemplate } from "@/client/DataClient";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
@@ -52,6 +53,7 @@ const EditableField = ({ value, onChange, className = "", multiline = false, typ
 export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false);
+  const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
 
   const handlePrint = () => {
     window.print();
@@ -68,6 +70,23 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
         clientName: customer.name,
         clientNumber: customer.number,
         clientAddress: customer.address,
+      });
+    }
+  };
+
+  const handleSelectItem = (item: ItemTemplate) => {
+    if (onUpdate) {
+      onUpdate({
+        ...data,
+        items: [
+          ...data.items,
+          {
+            description: item.description,
+            quantity: 1,
+            price: item.defaultPrice,
+            total: item.defaultPrice,
+          },
+        ],
       });
     }
   };
@@ -311,6 +330,10 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                         <Plus className="h-4 w-4 mr-2" />
                         Add Article
                       </Button>
+                      <Button onClick={() => setIsItemDialogOpen(true)} variant="outline">
+                        <Package className="h-4 w-4 mr-2" />
+                        Select Item
+                      </Button>
                     </div>
                     </td>
                   )}
@@ -336,6 +359,12 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
         open={isCustomerDialogOpen}
         onOpenChange={setIsCustomerDialogOpen}
         onSelectCustomer={handleSelectCustomer}
+      />
+
+      <ItemSelectionDialog
+        open={isItemDialogOpen}
+        onOpenChange={setIsItemDialogOpen}
+        onSelectItem={handleSelectItem}
       />
     </div>
   );

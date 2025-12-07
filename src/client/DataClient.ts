@@ -16,6 +16,13 @@ export interface Customer {
   address: string;
 }
 
+export interface ItemTemplate {
+  id: string;
+  description: string;
+  defaultPrice: number;
+  category?: string;
+}
+
 export interface DataClient {
   // Issuer/Company Details
   getDefaultIssuerDetails(): IssuerDetails;
@@ -27,6 +34,9 @@ export interface DataClient {
   
   // Customer Operations
   getCustomerList(): Customer[];
+  
+  // Item Operations
+  getItemTemplates(): ItemTemplate[];
   
   // Future operations for persistence (not implemented yet)
   // saveInvoice(invoice: InvoiceData): Promise<string>;
@@ -136,6 +146,69 @@ export class InMemoryDataClient implements DataClient {
     },
   ];
 
+  private itemTemplates: ItemTemplate[] = [
+    {
+      id: "1",
+      description: "Professional Services",
+      defaultPrice: 100,
+      category: "Services",
+    },
+    {
+      id: "2",
+      description: "Consulting",
+      defaultPrice: 150,
+      category: "Services",
+    },
+    {
+      id: "3",
+      description: "Web Development",
+      defaultPrice: 125,
+      category: "Development",
+    },
+    {
+      id: "4",
+      description: "Mobile App Development",
+      defaultPrice: 140,
+      category: "Development",
+    },
+    {
+      id: "5",
+      description: "Software License",
+      defaultPrice: 1500,
+      category: "Licenses",
+    },
+    {
+      id: "6",
+      description: "Support Services",
+      defaultPrice: 150,
+      category: "Services",
+    },
+    {
+      id: "7",
+      description: "UI/UX Design",
+      defaultPrice: 110,
+      category: "Design",
+    },
+    {
+      id: "8",
+      description: "Database Design",
+      defaultPrice: 130,
+      category: "Development",
+    },
+    {
+      id: "9",
+      description: "API Integration",
+      defaultPrice: 120,
+      category: "Development",
+    },
+    {
+      id: "10",
+      description: "Technical Documentation",
+      defaultPrice: 80,
+      category: "Documentation",
+    },
+  ];
+
   getDefaultIssuerDetails(): IssuerDetails {
     return { ...this.defaultIssuerDetails };
   }
@@ -167,6 +240,10 @@ export class InMemoryDataClient implements DataClient {
 
   getCustomerList(): Customer[] {
     return [...this.customers];
+  }
+
+  getItemTemplates(): ItemTemplate[] {
+    return [...this.itemTemplates];
   }
 }
 
