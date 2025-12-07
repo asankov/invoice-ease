@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
-import { InvoiceForm, InvoiceData } from "@/components/InvoiceForm";
+import { ArrowLeft } from "lucide-react";
+import { InvoiceData } from "@/components/InvoiceForm";
 import { InvoicePreview } from "@/components/InvoicePreview";
 import { IssuerDetails } from "./Admin";
 import { getDataClient } from "@/client/DataClient";
 
-interface IndexProps {
+interface NewInvoiceProps {
   issuerDetails: IssuerDetails;
 }
 
-const Index = ({ issuerDetails }: IndexProps) => {
+const NewInvoice = ({ issuerDetails }: NewInvoiceProps) => {
   const dataClient = getDataClient();
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(
     dataClient.getDefaultInvoiceTemplate()
@@ -25,16 +25,18 @@ const Index = ({ issuerDetails }: IndexProps) => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Invoice Generator</h1>
-            <p className="text-muted-foreground mt-1">Create professional invoices in seconds</p>
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold">New Invoice</h1>
+              <p className="text-muted-foreground mt-1">Create a professional invoice</p>
+            </div>
           </div>
-          <Link to="/admin">
-            <Button variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Admin Panel
-            </Button>
-          </Link>
         </div>
       </header>
 
@@ -52,4 +54,4 @@ const Index = ({ issuerDetails }: IndexProps) => {
   );
 };
 
-export default Index;
+export default NewInvoice;

@@ -9,19 +9,15 @@ import NewInvoice from "./pages/NewInvoice";
 import ViewInvoice from "./pages/ViewInvoice";
 import Admin, { IssuerDetails } from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import { getDataClient } from "./client/DataClient";
 
 const queryClient = new QueryClient();
-
-const defaultIssuerDetails: IssuerDetails = {
-  name: "Your Company Name",
-  address: "456 Business Ave, Suite 100",
-  city: "New York, NY 10001",
-  phone: "+1 (555) 123-4567",
-  email: "billing@yourcompany.com",
-};
+const dataClient = getDataClient();
 
 const App = () => {
-  const [issuerDetails, setIssuerDetails] = useState<IssuerDetails>(defaultIssuerDetails);
+  const [issuerDetails, setIssuerDetails] = useState<IssuerDetails>(
+    dataClient.getDefaultIssuerDetails()
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
