@@ -6,6 +6,7 @@ import { Download, Printer, Plus, Trash2 } from "lucide-react";
 import { InvoiceData, InvoiceItem } from "./InvoiceForm";
 import { IssuerDetails } from "../pages/Admin";
 import { useRef } from "react";
+import { toDate } from "date-fns";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
@@ -26,6 +27,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
   };
 
   const handleChange = (field: keyof InvoiceData, value: string) => {
+    console.log(value)
     if (onUpdate) {
       onUpdate({
         ...data,
@@ -169,12 +171,21 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
             <div className="text-right">
               <h3 className="text-sm font-semibold text-muted-foreground mb-2">INVOICE DATE</h3>
               {editable ? (
+                <div>
                 <Input
                   type="date"
                   value={data.date}
                   onChange={(e) => handleChange('date', e.target.value)}
                   className="font-medium ml-auto w-fit border-dashed print:border-none"
                 />
+                  <Button className="mt-2" onClick={() => {
+                    const today = new Date();
+                    const month = today.getMonth() + 1;
+                    const day = today.getDate();
+                    const date = `${today.getFullYear()}-${(month>9 ? '' : '0') + month}-${(day>9 ? '' : '0') + day}`
+                    handleChange('date', date);
+                  }}>Today</Button>
+                </div>
               ) : (
                 <p className="font-medium">{new Date(data.date).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -258,6 +269,19 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                     )}
                   </tr>
                 ))}
+
+                <tr>
+                  {editable && (
+                    <td className="p-4" colSpan={5}>
+                    <div className="flex justify-center gap-2 print:hidden">
+                      <Button onClick={addItem} variant="outline">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Article
+                      </Button>
+                    </div>
+                    </td>
+                  )}
+                </tr>
               </tbody>
               <tfoot className="border-t-2 border-border/50 bg-primary/5">
                 <tr>
@@ -271,14 +295,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
             </table>
           </div>
 
-          {editable && (
-            <div className="flex justify-center gap-2 print:hidden">
-              <Button onClick={addItem} variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Article
-              </Button>
-            </div>
-          )}
+
         </div>
       </Card>
     </div>
