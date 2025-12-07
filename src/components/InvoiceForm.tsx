@@ -44,41 +44,47 @@ export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
+    <Card className="w-full border-0 shadow-xl shadow-primary/5 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden">
+      <CardHeader className="pb-2 pt-8 px-8">
+        <CardTitle className="flex items-center gap-3 text-2xl">
+          <div className="p-2 rounded-xl bg-primary/10">
+            <FileText className="h-5 w-5 text-primary" />
+          </div>
           Invoice Details
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="invoiceNumber">Invoice Number</Label>
-            <Input
-              id="invoiceNumber"
-              name="invoiceNumber"
-              placeholder="INV-001"
-              value={formData.invoiceNumber}
-              onChange={handleChange}
-              required
-            />
+      <CardContent className="px-8 pb-8">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="invoiceNumber" className="text-sm font-medium">Invoice Number</Label>
+              <Input
+                id="invoiceNumber"
+                name="invoiceNumber"
+                placeholder="INV-001"
+                value={formData.invoiceNumber}
+                onChange={handleChange}
+                required
+                className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="date" className="text-sm font-medium">Date</Label>
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleChange}
+                required
+                className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              name="date"
-              type="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="clientName">Client Name</Label>
+            <Label htmlFor="clientName" className="text-sm font-medium">Client Name</Label>
             <Input
               id="clientName"
               name="clientName"
@@ -86,11 +92,12 @@ export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
               value={formData.clientName}
               onChange={handleChange}
               required
+              className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="clientNumber">Client Number</Label>
+            <Label htmlFor="clientNumber" className="text-sm font-medium">Client Number</Label>
             <Input
               id="clientNumber"
               name="clientNumber"
@@ -98,11 +105,12 @@ export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
               value={formData.clientNumber}
               onChange={handleChange}
               required
+              className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="clientAddress">Client Address</Label>
+            <Label htmlFor="clientAddress" className="text-sm font-medium">Client Address</Label>
             <Textarea
               id="clientAddress"
               name="clientAddress"
@@ -111,11 +119,12 @@ export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
               onChange={handleChange}
               required
               rows={3}
+              className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors resize-none"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentAmount">Payment Amount</Label>
+            <Label htmlFor="paymentAmount" className="text-sm font-medium">Payment Amount</Label>
             <Input
               id="paymentAmount"
               name="paymentAmount"
@@ -125,10 +134,11 @@ export const InvoiceForm = ({ onGenerate }: InvoiceFormProps) => {
               value={formData.paymentAmount}
               onChange={handleChange}
               required
+              className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
             />
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full rounded-xl h-12 text-base font-semibold mt-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
             Generate Invoice
           </Button>
         </form>

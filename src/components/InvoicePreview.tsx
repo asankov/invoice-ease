@@ -29,10 +29,12 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
 
   if (!data) {
     return (
-      <Card className="w-full h-full flex items-center justify-center min-h-[600px]">
+      <Card className="w-full h-full flex items-center justify-center min-h-[600px] border-0 shadow-xl shadow-primary/5 bg-card/80 backdrop-blur-sm rounded-2xl">
         <div className="text-center text-muted-foreground">
-          <FileText className="h-16 w-16 mx-auto mb-4 opacity-50" />
-          <p>Fill in the form to generate an invoice</p>
+          <div className="p-4 rounded-2xl bg-muted/50 w-fit mx-auto mb-4">
+            <FileText className="h-12 w-12 opacity-50" />
+          </div>
+          <p className="text-lg">Fill in the form to generate an invoice</p>
         </div>
       </Card>
     );
@@ -40,27 +42,27 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 print:hidden">
-        <Button onClick={handlePrint} variant="outline" className="flex-1">
+      <div className="flex gap-3 print:hidden">
+        <Button onClick={handlePrint} variant="outline" className="flex-1 rounded-xl h-11 border-border/50 hover:bg-muted/50">
           <Printer className="h-4 w-4 mr-2" />
           Print
         </Button>
-        <Button onClick={handleDownload} className="flex-1">
+        <Button onClick={handleDownload} className="flex-1 rounded-xl h-11 shadow-lg shadow-primary/20">
           <Download className="h-4 w-4 mr-2" />
           Download PDF
         </Button>
       </div>
 
-      <Card ref={printRef} className="w-full p-8 print:shadow-none">
+      <Card ref={printRef} className="w-full p-10 print:shadow-none border-0 shadow-xl shadow-primary/5 bg-card/80 backdrop-blur-sm rounded-2xl">
         <div className="space-y-8">
           {/* Header */}
-          <div className="flex justify-between items-start border-b border-border pb-6">
+          <div className="flex justify-between items-start pb-8 border-b border-border/50">
             <div>
-              <h1 className="text-3xl font-bold mb-2">INVOICE</h1>
-              <p className="text-muted-foreground">#{data.invoiceNumber}</p>
+              <h1 className="text-4xl font-bold tracking-tight mb-2">INVOICE</h1>
+              <p className="text-muted-foreground text-lg">#{data.invoiceNumber}</p>
             </div>
             <div className="text-right">
-              <h2 className="text-xl font-semibold mb-1">{ISSUER_DETAILS.name}</h2>
+              <h2 className="text-xl font-semibold mb-2">{ISSUER_DETAILS.name}</h2>
               <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.address}</p>
               <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.city}</p>
               <p className="text-sm text-muted-foreground">{ISSUER_DETAILS.phone}</p>
@@ -70,17 +72,17 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
 
           {/* Details */}
           <div className="grid grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-2">BILL TO</h3>
+            <div className="p-5 rounded-xl bg-muted/30">
+              <h3 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Bill To</h3>
               <div className="space-y-1">
-                <p className="font-medium">{data.clientName}</p>
+                <p className="font-semibold text-lg">{data.clientName}</p>
                 <p className="text-sm text-muted-foreground">{data.clientNumber}</p>
                 <p className="text-sm text-muted-foreground whitespace-pre-line">{data.clientAddress}</p>
               </div>
             </div>
-            <div className="text-right">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-2">INVOICE DATE</h3>
-              <p className="font-medium">{new Date(data.date).toLocaleDateString('en-US', { 
+            <div className="p-5 rounded-xl bg-muted/30 text-right">
+              <h3 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Invoice Date</h3>
+              <p className="font-semibold text-lg">{new Date(data.date).toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
@@ -89,26 +91,26 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
           </div>
 
           {/* Items Table */}
-          <div className="border border-border rounded-lg overflow-hidden">
+          <div className="rounded-xl overflow-hidden border border-border/50">
             <table className="w-full">
-              <thead className="bg-muted">
+              <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-4 font-semibold">Description</th>
-                  <th className="text-right p-4 font-semibold">Amount</th>
+                  <th className="text-left p-5 font-semibold">Description</th>
+                  <th className="text-right p-5 font-semibold">Amount</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-border">
-                  <td className="p-4">Professional Services</td>
-                  <td className="p-4 text-right font-medium">
+                <tr className="border-t border-border/50">
+                  <td className="p-5">Professional Services</td>
+                  <td className="p-5 text-right font-medium">
                     ${parseFloat(data.paymentAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
               </tbody>
-              <tfoot className="border-t-2 border-border bg-muted/50">
+              <tfoot className="border-t-2 border-border/50 bg-primary/5">
                 <tr>
-                  <td className="p-4 font-bold text-lg">TOTAL</td>
-                  <td className="p-4 text-right font-bold text-lg">
+                  <td className="p-5 font-bold text-xl">Total</td>
+                  <td className="p-5 text-right font-bold text-xl text-primary">
                     ${parseFloat(data.paymentAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -117,8 +119,8 @@ export const InvoicePreview = ({ data }: InvoicePreviewProps) => {
           </div>
 
           {/* Footer */}
-          <div className="pt-8 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
+          <div className="pt-8 text-center">
+            <p className="text-muted-foreground">
               Thank you for your business!
             </p>
           </div>
