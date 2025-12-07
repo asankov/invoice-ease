@@ -34,30 +34,29 @@ const Admin = ({ issuerDetails, onUpdateIssuer }: AdminProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground mt-1">Manage your company details</p>
-          </div>
-          <Link to="/">
-            <Button variant="outline">Back to Invoices</Button>
-          </Link>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <main className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
+          <div className="mb-8">
+            <Link to="/">
+              <Button variant="ghost" className="rounded-full hover:shadow-md transition-all duration-300 hover:scale-105 mb-6 -ml-4">
+                ← Back to Invoices
+              </Button>
+            </Link>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-2">Admin Panel</h1>
+            <p className="text-muted-foreground text-lg">Manage your company details</p>
+          </div>
+          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50 p-6">
+              <CardTitle className="flex items-center gap-3 text-xl">
+                <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <Settings className="h-5 w-5 text-primary" />
+                </div>
                 Company Details
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <form className="space-y-4">
+            <CardContent className="p-6">
+              <form className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Company Name</Label>
                   <Input
@@ -114,8 +113,8 @@ const Admin = ({ issuerDetails, onUpdateIssuer }: AdminProps) => {
                   />
                 </div>
 
-                <div className="pt-4">
-                  <Button onClick={handleSave} className="w-full">
+                <div className="pt-6">
+                  <Button onClick={handleSave} className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-base font-semibold">
                     Save Changes
                   </Button>
                 </div>

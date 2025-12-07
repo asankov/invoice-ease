@@ -95,43 +95,27 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
   };
 
   return (
-    <Card className="w-full border-0 shadow-xl shadow-primary/5 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden">
-      <CardHeader className="pb-2 pt-8 px-8">
-        <CardTitle className="flex items-center gap-3 text-2xl">
-          <div className="p-2 rounded-xl bg-primary/10">
+    <Card className="w-full shadow-lg border-0 rounded-3xl overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+      <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
+        <CardTitle className="flex items-center gap-3 text-xl">
+          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
             <FileText className="h-5 w-5 text-primary" />
           </div>
           Invoice Details
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-8 pb-8">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="invoiceNumber" className="text-sm font-medium">Invoice Number</Label>
-              <Input
-                id="invoiceNumber"
-                name="invoiceNumber"
-                placeholder="INV-001"
-                value={formData.invoiceNumber}
-                onChange={handleChange}
-                required
-                className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="date" className="text-sm font-medium">Date</Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="rounded-xl border-border/50 bg-background/50 focus:bg-background transition-colors"
-              />
-            </div>
+      <CardContent className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="invoiceNumber">Invoice Number</Label>
+            <Input
+              id="invoiceNumber"
+              name="invoiceNumber"
+              placeholder="INV-001"
+              value={formData.invoiceNumber}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="space-y-2">
@@ -174,18 +158,18 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Items</Label>
-              <Button type="button" onClick={addItem} size="sm" variant="outline">
+              <Label className="text-base font-semibold">Items</Label>
+              <Button type="button" onClick={addItem} size="sm" className="rounded-full">
                 <Plus className="h-4 w-4 mr-1" />
                 Add Item
               </Button>
             </div>
             <div className="space-y-4">
               {formData.items.map((item, index) => (
-                <Card key={index} className="p-4">
-                  <div className="space-y-3">
+                <Card key={index} className="p-5 rounded-2xl border-0 shadow-md bg-gradient-to-br from-accent/30 to-accent/10 hover:shadow-lg transition-all duration-300">
+                  <div className="space-y-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 space-y-2">
                         <Label htmlFor={`description-${index}`}>Description</Label>

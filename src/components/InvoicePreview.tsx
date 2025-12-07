@@ -140,19 +140,19 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex gap-3 print:hidden">
-        <Button onClick={handlePrint} variant="outline" className="flex-1 rounded-xl h-11 border-border/50 hover:bg-muted/50">
+        <Button onClick={handlePrint} variant="outline" className="flex-1 rounded-2xl h-12 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
           <Printer className="h-4 w-4 mr-2" />
           Print
         </Button>
-        <Button onClick={handleDownload} className="flex-1 rounded-xl h-11 shadow-lg shadow-primary/20">
+        <Button onClick={handleDownload} className="flex-1 rounded-2xl h-12 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
           <Download className="h-4 w-4 mr-2" />
           Download PDF
         </Button>
       </div>
 
-      <Card ref={printRef} className="w-full p-10 print:shadow-none border-0 shadow-xl shadow-primary/5 bg-card/80 backdrop-blur-sm rounded-2xl">
+      <Card ref={printRef} className="w-full p-8 print:shadow-none shadow-xl border-0 rounded-3xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
         <div className="space-y-8">
           {/* Header */}
           <div className="flex justify-between items-start pb-8 border-b border-border/50">
@@ -249,15 +249,15 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
           </div>
 
           {/* Items Table */}
-          <div className="rounded-xl overflow-hidden border border-border/50">
+          <div className="border-0 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-muted/30 to-muted/10">
             <table className="w-full">
-              <thead className="bg-muted/50">
+              <thead className="bg-gradient-to-r from-primary/15 to-primary/5">
                 <tr>
-                  <th className="text-left p-4 font-semibold">Description</th>
-                  <th className="text-center p-4 font-semibold">Quantity</th>
-                  <th className="text-right p-4 font-semibold">Price</th>
-                  <th className="text-right p-4 font-semibold">Total</th>
-                  {editable && <th className="text-right p-4 font-semibold w-12"></th>}
+                  <th className="text-left p-5 font-bold">Description</th>
+                  <th className="text-center p-5 font-bold">Quantity</th>
+                  <th className="text-right p-5 font-bold">Price</th>
+                  <th className="text-right p-5 font-bold">Total</th>
+                  {editable && <th className="text-right p-5 font-bold w-12"></th>}
                 </tr>
               </thead>
               <tbody>
@@ -339,10 +339,10 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                   )}
                 </tr>
               </tbody>
-              <tfoot className="border-t-2 border-border/50 bg-primary/5">
+              <tfoot className="border-t-2 border-border bg-gradient-to-r from-primary/20 to-primary/10">
                 <tr>
-                  <td colSpan={editable ? 4 : 3} className="p-4 font-bold text-lg">TOTAL</td>
-                  <td className="p-4 text-right font-bold text-lg">
+                  <td colSpan={editable ? 4 : 3} className="p-5 font-bold text-lg">TOTAL</td>
+                  <td className="p-5 text-right font-bold text-lg">
                     ${data.items.reduce((sum, item) => sum + item.total, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   {editable && <td></td>}

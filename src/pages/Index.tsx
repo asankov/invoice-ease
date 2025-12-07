@@ -22,24 +22,21 @@ const Index = ({ issuerDetails }: IndexProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Invoice Generator</h1>
-            <p className="text-muted-foreground mt-1">Create professional invoices in seconds</p>
-          </div>
-          <Link to="/admin">
-            <Button variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Admin Panel
-            </Button>
-          </Link>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <main className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-2">Invoice Generator</h1>
+              <p className="text-muted-foreground text-lg">Create professional invoices in seconds</p>
+            </div>
+            <Link to="/admin">
+              <Button variant="outline" className="rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <Settings className="h-4 w-4 mr-2" />
+                Admin Panel
+              </Button>
+            </Link>
+          </div>
           <InvoicePreview
             data={invoiceData}
             issuerDetails={issuerDetails}

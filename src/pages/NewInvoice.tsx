@@ -22,32 +22,28 @@ const NewInvoice = ({ issuerDetails }: NewInvoiceProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex gap-8 mb-8">
+            <Link to="/" className="pt-2">
+              <Button variant="ghost" size="icon" className="rounded-full hover:shadow-md transition-all duration-300 hover:scale-105 h-12 w-12">
+                <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold">New Invoice</h1>
-              <p className="text-muted-foreground mt-1">Create a professional invoice</p>
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-2">New Invoice</h1>
+              <p className="text-muted-foreground text-lg">Create a professional invoice</p>
             </div>
           </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-5xl mx-auto">
-          <InvoicePreview
-            data={invoiceData}
-            issuerDetails={issuerDetails}
-            onUpdate={handleGenerateInvoice}
-            editable={true}
-          />
+          <div className="ml-20">
+            <InvoicePreview
+              data={invoiceData}
+              issuerDetails={issuerDetails}
+              onUpdate={handleGenerateInvoice}
+              editable={true}
+            />
+          </div>
         </div>
       </main>
     </div>
