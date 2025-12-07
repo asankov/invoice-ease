@@ -9,6 +9,13 @@ export interface InvoiceListItem {
   total: number;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  number: string;
+  address: string;
+}
+
 export interface DataClient {
   // Issuer/Company Details
   getDefaultIssuerDetails(): IssuerDetails;
@@ -17,6 +24,9 @@ export interface DataClient {
   getInvoiceById(id: string): InvoiceData | null;
   getInvoiceList(): InvoiceListItem[];
   getDefaultInvoiceTemplate(): InvoiceData;
+  
+  // Customer Operations
+  getCustomerList(): Customer[];
   
   // Future operations for persistence (not implemented yet)
   // saveInvoice(invoice: InvoiceData): Promise<string>;
@@ -93,6 +103,39 @@ export class InMemoryDataClient implements DataClient {
     date: new Date().toISOString().split('T')[0],
   };
 
+  private customers: Customer[] = [
+    {
+      id: "1",
+      name: "John Doe",
+      number: "+1 234 567 8900",
+      address: "123 Main Street\nCity, State, ZIP",
+    },
+    {
+      id: "2",
+      name: "Jane Smith",
+      number: "+1 345 678 9012",
+      address: "456 Oak Avenue\nSpringfield, IL 62701",
+    },
+    {
+      id: "3",
+      name: "Acme Corp",
+      number: "+1 456 789 0123",
+      address: "789 Corporate Blvd\nNew York, NY 10001",
+    },
+    {
+      id: "4",
+      name: "TechStart Inc",
+      number: "+1 567 890 1234",
+      address: "321 Innovation Drive\nSan Francisco, CA 94105",
+    },
+    {
+      id: "5",
+      name: "Global Solutions Ltd",
+      number: "+1 678 901 2345",
+      address: "555 Business Park\nLondon, UK",
+    },
+  ];
+
   getDefaultIssuerDetails(): IssuerDetails {
     return { ...this.defaultIssuerDetails };
   }
@@ -120,6 +163,10 @@ export class InMemoryDataClient implements DataClient {
       ...this.defaultInvoiceTemplate,
       date: new Date().toISOString().split('T')[0],
     };
+  }
+
+  getCustomerList(): Customer[] {
+    return [...this.customers];
   }
 }
 

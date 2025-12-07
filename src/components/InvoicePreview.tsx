@@ -2,11 +2,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Download, Printer, Plus, Trash2 } from "lucide-react";
+import { Download, Printer, Plus, Trash2, Users } from "lucide-react";
 import { InvoiceData, InvoiceItem } from "./InvoiceForm";
 import { IssuerDetails } from "../pages/Admin";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toDate } from "date-fns";
+import { CustomerSelectionDialog } from "./CustomerSelectionDialog";
+import { Customer } from "@/client/DataClient";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
@@ -15,8 +17,41 @@ interface InvoicePreviewProps {
   editable?: boolean;
 }
 
+const EditableField = ({ value, onChange, className = "", multiline = false, type = "text", editable = true }: {
+  value: string | number;
+  onChange: (value: string) => void;
+  className?: string;
+  multiline?: boolean;
+  type?: string;
+  editable?: boolean;
+}) => {
+  if (!editable) {
+    return <span className={className}>{value}</span>;
+  }
+
+  if (multiline) {
+    return (
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${className} min-h-[60px] resize-none border-dashed print:border-none`}
+      />
+    );
+  }
+
+  return (
+    <Input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`${className} border-dashed print:border-none`}
+    />
+  );
+};
+
 export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
+  const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false);
 
   const handlePrint = () => {
     window.print();
@@ -24,6 +59,17 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
 
   const handleDownload = () => {
     window.print();
+  };
+
+  const handleSelectCustomer = (customer: Customer) => {
+    if (onUpdate) {
+      onUpdate({
+        ...data,
+        clientName: customer.name,
+        clientNumber: customer.number,
+        clientAddress: customer.address,
+      });
+    }
   };
 
   const handleChange = (field: keyof InvoiceData, value: string) => {
@@ -74,37 +120,6 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
     }
   };
 
-  const EditableField = ({ value, onChange, className = "", multiline = false, type = "text" }: {
-    value: string | number;
-    onChange: (value: string) => void;
-    className?: string;
-    multiline?: boolean;
-    type?: string;
-  }) => {
-    if (!editable) {
-      return <span className={className}>{value}</span>;
-    }
-
-    if (multiline) {
-      return (
-        <Textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={`${className} min-h-[60px] resize-none border-dashed print:border-none`}
-        />
-      );
-    }
-
-    return (
-      <Input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`${className} border-dashed print:border-none`}
-      />
-    );
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex gap-3 print:hidden">
@@ -130,6 +145,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                   value={data.invoiceNumber}
                   onChange={(value) => handleChange('invoiceNumber', value)}
                   className="text-muted-foreground w-32"
+                  editable={editable}
                 />
               </div>
             </div>
@@ -145,18 +161,34 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
           {/* Details */}
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-2">BILL TO</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground">BILL TO</h3>
+                {editable && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsCustomerDialogOpen(true)}
+                    className="print:hidden"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Select Customer
+                  </Button>
+                )}
+              </div>
               <div className="space-y-2">
                 <EditableField
                   value={data.clientName}
                   onChange={(value) => handleChange('clientName', value)}
                   className="font-medium"
+                  editable={editable}
                 />
                 <EditableField
                   value={data.clientAddress}
                   onChange={(value) => handleChange('clientAddress', value)}
                   className="text-sm text-muted-foreground"
                   multiline
+                  editable={editable}
                 />
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold">Company reg. number:</span>
@@ -164,6 +196,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                     value={data.clientNumber}
                     onChange={(value) => handleChange('clientNumber', value)}
                     className="text-sm text-muted-foreground flex-1"
+                    editable={editable}
                   />
                 </div>
               </div>
@@ -298,6 +331,12 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
 
         </div>
       </Card>
+
+      <CustomerSelectionDialog
+        open={isCustomerDialogOpen}
+        onOpenChange={setIsCustomerDialogOpen}
+        onSelectCustomer={handleSelectCustomer}
+      />
     </div>
   );
 };
