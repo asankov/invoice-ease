@@ -3,15 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Settings, Plus, FileText, Calendar, DollarSign } from "lucide-react";
 import { IssuerDetails } from "./Admin";
-import { getDataClient } from "@/client/DataClient";
+import { getDataClient, InvoiceListItem } from "@/client/DataClient";
+import { useEffect, useState } from "react";
 
 interface InvoiceListProps {
   issuerDetails: IssuerDetails;
 }
 
 const InvoiceList = ({ issuerDetails }: InvoiceListProps) => {
-  const dataClient = getDataClient();
-  const invoices = dataClient.getInvoiceList();
+  const [invoices, setInvoices] = useState<InvoiceListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadInvoices = async () => {
+      try {
+        const dataClient = getDataClient();
+        const data = await dataClient.getInvoiceList();
+        setInvoices(data);
+      } catch (error) {
+        console.error("Failed to load invoices:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInvoices();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -42,7 +59,14 @@ const InvoiceList = ({ issuerDetails }: InvoiceListProps) => {
             </Link>
           </div>
 
-          {invoices.length === 0 ? (
+          {loading ? (
+            <Card className="p-12 shadow-xl border-0 rounded-3xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+              <div className="text-center space-y-4">
+                <div className="h-12 w-12 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="text-muted-foreground">Loading invoices...</p>
+              </div>
+            </Card>
+          ) : invoices.length === 0 ? (
             <Card className="p-12 shadow-xl border-0 rounded-3xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
               <div className="text-center space-y-4">
                 <FileText className="h-12 w-12 mx-auto text-muted-foreground" />

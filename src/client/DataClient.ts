@@ -1,5 +1,6 @@
 import { InvoiceData, InvoiceItem } from "@/components/InvoiceForm";
 import { IssuerDetails } from "@/pages/Admin";
+import { ApiDataClient, ApiDataClientConfig } from "./ApiDataClient";
 
 export interface InvoiceListItem {
   id: string;
@@ -25,23 +26,29 @@ export interface ItemTemplate {
 
 export interface DataClient {
   // Issuer/Company Details
-  getDefaultIssuerDetails(): IssuerDetails;
+  getDefaultIssuerDetails(): Promise<IssuerDetails>;
   
   // Invoice Operations
-  getInvoiceById(id: string): InvoiceData | null;
-  getInvoiceList(): InvoiceListItem[];
-  getDefaultInvoiceTemplate(): InvoiceData;
+  getInvoiceById(id: string): Promise<InvoiceData | null>;
+  getInvoiceList(): Promise<InvoiceListItem[]>;
+  getDefaultInvoiceTemplate(): Promise<InvoiceData>;
   
   // Customer Operations
-  getCustomerList(): Customer[];
+  getCustomerList(): Promise<Customer[]>;
   
   // Item Operations
-  getItemTemplates(): ItemTemplate[];
+  getItemTemplates(): Promise<ItemTemplate[]>;
   
-  // Future operations for persistence (not implemented yet)
-  // saveInvoice(invoice: InvoiceData): Promise<string>;
-  // updateInvoice(id: string, invoice: InvoiceData): Promise<void>;
-  // deleteInvoice(id: string): Promise<void>;
+  // Persistence operations
+  saveInvoice?(invoice: InvoiceData): Promise<string>;
+  updateInvoice?(id: string, invoice: InvoiceData): Promise<void>;
+  deleteInvoice?(id: string): Promise<void>;
+  saveCustomer?(customer: Omit<Customer, "id">): Promise<string>;
+  updateCustomer?(id: string, customer: Omit<Customer, "id">): Promise<void>;
+  deleteCustomer?(id: string): Promise<void>;
+  saveItemTemplate?(item: Omit<ItemTemplate, "id">): Promise<string>;
+  updateItemTemplate?(id: string, item: Omit<ItemTemplate, "id">): Promise<void>;
+  deleteItemTemplate?(id: string): Promise<void>;
 }
 
 /**
@@ -209,16 +216,16 @@ export class InMemoryDataClient implements DataClient {
     },
   ];
 
-  getDefaultIssuerDetails(): IssuerDetails {
+  async getDefaultIssuerDetails(): Promise<IssuerDetails> {
     return { ...this.defaultIssuerDetails };
   }
 
-  getInvoiceById(id: string): InvoiceData | null {
+  async getInvoiceById(id: string): Promise<InvoiceData | null> {
     const invoice = this.invoices.get(id);
     return invoice ? { ...invoice } : null;
   }
 
-  getInvoiceList(): InvoiceListItem[] {
+  async getInvoiceList(): Promise<InvoiceListItem[]> {
     return Array.from(this.invoices.entries()).map(([id, invoice]) => {
       const total = invoice.items.reduce((sum, item) => sum + item.total, 0);
       return {
@@ -231,18 +238,18 @@ export class InMemoryDataClient implements DataClient {
     });
   }
 
-  getDefaultInvoiceTemplate(): InvoiceData {
+  async getDefaultInvoiceTemplate(): Promise<InvoiceData> {
     return {
       ...this.defaultInvoiceTemplate,
       date: new Date().toISOString().split('T')[0],
     };
   }
 
-  getCustomerList(): Customer[] {
+  async getCustomerList(): Promise<Customer[]> {
     return [...this.customers];
   }
 
-  getItemTemplates(): ItemTemplate[] {
+  async getItemTemplates(): Promise<ItemTemplate[]> {
     return [...this.itemTemplates];
   }
 }
@@ -259,4 +266,11 @@ export function getDataClient(): DataClient {
 
 export function setDataClient(client: DataClient): void {
   dataClientInstance = client;
+}
+
+/**
+ * Creates and configures an API-based data client
+ */
+export function createApiDataClient(config: ApiDataClientConfig): DataClient {
+  return new ApiDataClient(config);
 }
