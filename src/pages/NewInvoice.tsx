@@ -1,24 +1,40 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { InvoiceData } from "@/components/InvoiceForm";
 import { InvoicePreview } from "@/components/InvoicePreview";
-import { IssuerDetails } from "./Admin";
-import { getDataClient } from "@/client/DataClient";
+import { useQuery, useMutation } from "convex/react";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "../../convex/_generated/api";
 
-interface NewInvoiceProps {
-  issuerDetails: IssuerDetails;
-}
+const NewInvoice = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const company = useQuery(api.company.get);
+  const createInvoice = useMutation(api.invoices.create);
 
-const NewInvoice = ({ issuerDetails }: NewInvoiceProps) => {
-  const dataClient = getDataClient();
-  const [invoiceData, setInvoiceData] = useState<InvoiceData>(
-    dataClient.getDefaultInvoiceTemplate()
-  );
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>({
+    invoiceNumber: "",
+    clientName: "",
+    clientNumber: "",
+    clientAddress: "",
+    items: [],
+    date: new Date().toISOString().split('T')[0],
+  });
 
-  const handleGenerateInvoice = (data: InvoiceData) => {
+  const issuerDetails = company ?? { name: "", address: "", phone: "", email: "" };
+  const issuerDetailsConfigured = !!company;
+
+  const handleSave = async (data: InvoiceData) => {
     setInvoiceData(data);
+    try {
+      const id = await createInvoice(data);
+      toast({ title: "Invoice saved" });
+      navigate(`/invoice/${id}`);
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to save invoice", variant: "destructive" });
+    }
   };
 
   return (
@@ -27,7 +43,7 @@ const NewInvoice = ({ issuerDetails }: NewInvoiceProps) => {
         <div className="max-w-7xl mx-auto">
           <div className="flex gap-8 mb-8">
             <Link to="/" className="pt-2">
-              <Button variant="ghost" size="icon" className="rounded-full hover:shadow-md transition-all duration-300 hover:scale-105 h-12 w-12">
+              <Button variant="ghost" size="icon" className="hover:shadow-md transition-all duration-300 hover:scale-105 h-12 w-12">
                 <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
@@ -40,8 +56,10 @@ const NewInvoice = ({ issuerDetails }: NewInvoiceProps) => {
             <InvoicePreview
               data={invoiceData}
               issuerDetails={issuerDetails}
-              onUpdate={handleGenerateInvoice}
+              onUpdate={setInvoiceData}
+              onSave={handleSave}
               editable={true}
+              issuerDetailsConfigured={issuerDetailsConfigured}
             />
           </div>
         </div>

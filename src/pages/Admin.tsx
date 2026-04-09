@@ -1,36 +1,55 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useQuery, useMutation } from "convex/react";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "../../convex/_generated/api";
 
 export interface IssuerDetails {
   name: string;
   address: string;
-  city: string;
   phone: string;
   email: string;
 }
 
-interface AdminProps {
-  issuerDetails: IssuerDetails;
-  onUpdateIssuer: (details: IssuerDetails) => void;
-}
+const Admin = () => {
+  const { toast } = useToast();
+  const company = useQuery(api.company.get);
+  const saveCompany = useMutation(api.company.save);
 
-const Admin = ({ issuerDetails, onUpdateIssuer }: AdminProps) => {
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    onUpdateIssuer({
-      ...issuerDetails,
-      [e.target.name]: e.target.value,
-    });
+  const [details, setDetails] = useState<IssuerDetails>({
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    if (company) {
+      setDetails({
+        name: company.name,
+        address: company.address,
+        phone: company.phone,
+        email: company.email,
+      });
+    }
+  }, [company]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDetails({ ...details, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    // No-op for now - will implement persistence later
+  const handleSave = async () => {
+    try {
+      await saveCompany(details);
+      toast({ title: "Success", description: "Company details saved successfully" });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to save company details", variant: "destructive" });
+    }
   };
 
   return (
@@ -39,17 +58,17 @@ const Admin = ({ issuerDetails, onUpdateIssuer }: AdminProps) => {
         <div className="max-w-2xl mx-auto">
           <div className="mb-8">
             <Link to="/">
-              <Button variant="ghost" className="rounded-full hover:shadow-md transition-all duration-300 hover:scale-105 mb-6 -ml-4">
+              <Button variant="ghost" className="hover:shadow-md transition-all duration-300 hover:scale-105 mb-6 -ml-4">
                 ← Back to Invoices
               </Button>
             </Link>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-2">Admin Panel</h1>
             <p className="text-muted-foreground text-lg">Manage your company details</p>
           </div>
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <Card className="shadow-xl border-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50 p-6">
               <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                   <Settings className="h-5 w-5 text-primary" />
                 </div>
                 Company Details
@@ -59,62 +78,26 @@ const Admin = ({ issuerDetails, onUpdateIssuer }: AdminProps) => {
               <form className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Company Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Your Company Name"
-                    value={issuerDetails.name}
-                    onChange={handleChange}
-                  />
+                  <Input id="name" name="name" value={details.name} onChange={handleChange} />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    placeholder="456 Business Ave, Suite 100"
-                    value={issuerDetails.address}
-                    onChange={handleChange}
-                  />
+                  <Input id="address" name="address" value={details.address} onChange={handleChange} />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="city">City, State, ZIP</Label>
-                  <Input
-                    id="city"
-                    name="city"
-                    placeholder="New York, NY 10001"
-                    value={issuerDetails.city}
-                    onChange={handleChange}
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    placeholder="+1 (555) 123-4567"
-                    value={issuerDetails.phone}
-                    onChange={handleChange}
-                  />
+                  <Input id="phone" name="phone" value={details.phone} onChange={handleChange} />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="billing@yourcompany.com"
-                    value={issuerDetails.email}
-                    onChange={handleChange}
-                  />
+                  <Input id="email" name="email" type="email" value={details.email} onChange={handleChange} />
                 </div>
-
                 <div className="pt-6">
-                  <Button onClick={handleSave} className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-base font-semibold">
+                  <Button
+                    type="button"
+                    onClick={handleSave}
+                    className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-base font-semibold"
+                  >
                     Save Changes
                   </Button>
                 </div>

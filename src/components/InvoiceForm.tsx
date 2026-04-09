@@ -95,10 +95,10 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
   };
 
   return (
-    <Card className="w-full shadow-lg border-0 rounded-3xl overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+    <Card className="w-full shadow-lg border-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
         <CardTitle className="flex items-center gap-3 text-xl">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+          <div className="h-10 w-10 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
             <FileText className="h-5 w-5 text-primary" />
           </div>
           Invoice Details
@@ -161,14 +161,14 @@ export const InvoiceForm = ({ onGenerate, initialData }: InvoiceFormProps) => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="text-base font-semibold">Items</Label>
-              <Button type="button" onClick={addItem} size="sm" className="rounded-full">
+              <Button type="button" onClick={addItem} size="sm">
                 <Plus className="h-4 w-4 mr-1" />
                 Add Item
               </Button>
             </div>
             <div className="space-y-4">
               {formData.items.map((item, index) => (
-                <Card key={index} className="p-5 rounded-2xl border-0 shadow-md bg-gradient-to-br from-accent/30 to-accent/10 hover:shadow-lg transition-all duration-300">
+                <Card key={index} className="p-5 border-0 shadow-md bg-gradient-to-br from-accent/30 to-accent/10 hover:shadow-lg transition-all duration-300">
                   <div className="space-y-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 space-y-2">

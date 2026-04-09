@@ -2,20 +2,20 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Download, Printer, Plus, Trash2, Users, Package } from "lucide-react";
+import { Download, Printer, Plus, Trash2, Users, Package, Save } from "lucide-react";
 import { InvoiceData, InvoiceItem } from "./InvoiceForm";
 import { IssuerDetails } from "../pages/Admin";
 import { useRef, useState } from "react";
-import { toDate } from "date-fns";
 import { CustomerSelectionDialog } from "./CustomerSelectionDialog";
 import { ItemSelectionDialog } from "./ItemSelectionDialog";
-import { Customer, ItemTemplate } from "@/client/DataClient";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
   issuerDetails: IssuerDetails;
   onUpdate?: (data: InvoiceData) => void;
+  onSave?: (data: InvoiceData) => void;
   editable?: boolean;
+  issuerDetailsConfigured?: boolean;
 }
 
 const EditableField = ({ value, onChange, className = "", multiline = false, type = "text", editable = true }: {
@@ -50,7 +50,7 @@ const EditableField = ({ value, onChange, className = "", multiline = false, typ
   );
 };
 
-export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false }: InvoicePreviewProps) => {
+export const InvoicePreview = ({ data, issuerDetails, onUpdate, onSave, editable = false, issuerDetailsConfigured = true }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false);
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
@@ -63,7 +63,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
     window.print();
   };
 
-  const handleSelectCustomer = (customer: Customer) => {
+  const handleSelectCustomer = (customer: { name: string; number: string; address: string }) => {
     if (onUpdate) {
       onUpdate({
         ...data,
@@ -74,7 +74,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
     }
   };
 
-  const handleSelectItem = (item: ItemTemplate) => {
+  const handleSelectItem = (item: { description: string; defaultPrice: number }) => {
     if (onUpdate) {
       onUpdate({
         ...data,
@@ -92,67 +92,54 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
   };
 
   const handleChange = (field: keyof InvoiceData, value: string) => {
-    console.log(value)
     if (onUpdate) {
-      onUpdate({
-        ...data,
-        [field]: value,
-      });
+      onUpdate({ ...data, [field]: value });
     }
   };
 
   const handleItemChange = (index: number, field: keyof InvoiceItem, value: string | number) => {
     if (onUpdate) {
       const updatedItems = [...data.items];
-      updatedItems[index] = {
-        ...updatedItems[index],
-        [field]: value,
-      };
-
-      // Recalculate total if quantity or price changed
+      updatedItems[index] = { ...updatedItems[index], [field]: value };
       if (field === 'quantity' || field === 'price') {
         updatedItems[index].total = updatedItems[index].quantity * updatedItems[index].price;
       }
-
-      onUpdate({
-        ...data,
-        items: updatedItems,
-      });
+      onUpdate({ ...data, items: updatedItems });
     }
   };
 
   const addItem = () => {
     if (onUpdate) {
-      onUpdate({
-        ...data,
-        items: [...data.items, { description: "", descriptionSecondary: "", quantity: 1, price: 0, total: 0 }],
-      });
+      onUpdate({ ...data, items: [...data.items, { description: "", quantity: 1, price: 0, total: 0 }] });
     }
   };
 
   const removeItem = (index: number) => {
     if (onUpdate && data.items.length > 1) {
-      onUpdate({
-        ...data,
-        items: data.items.filter((_, i) => i !== index),
-      });
+      onUpdate({ ...data, items: data.items.filter((_, i) => i !== index) });
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex gap-3 print:hidden">
-        <Button onClick={handlePrint} variant="outline" className="flex-1 rounded-2xl h-12 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <Button onClick={handlePrint} variant="outline" className="flex-1 h-12 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
           <Printer className="h-4 w-4 mr-2" />
           Print
         </Button>
-        <Button onClick={handleDownload} className="flex-1 rounded-2xl h-12 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <Button onClick={handleDownload} className="flex-1 h-12 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
           <Download className="h-4 w-4 mr-2" />
           Download PDF
         </Button>
+        {editable && onSave && (
+          <Button onClick={() => onSave(data)} className="flex-1 h-12 bg-gradient-to-r from-green-600 to-green-500 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+            <Save className="h-4 w-4 mr-2" />
+            Save Invoice
+          </Button>
+        )}
       </div>
 
-      <Card ref={printRef} className="w-full p-8 print:shadow-none shadow-xl border-0 rounded-3xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+      <Card ref={printRef} className="w-full p-8 print:shadow-none shadow-xl border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
         <div className="space-y-8">
           {/* Header */}
           <div className="flex justify-between items-start pb-8 border-b border-border/50">
@@ -169,11 +156,18 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
               </div>
             </div>
             <div className="text-right">
-              <h2 className="text-xl font-semibold mb-1">{issuerDetails.name}</h2>
-              <p className="text-sm text-muted-foreground">{issuerDetails.address}</p>
-              <p className="text-sm text-muted-foreground">{issuerDetails.city}</p>
-              <p className="text-sm text-muted-foreground">{issuerDetails.phone}</p>
-              <p className="text-sm text-muted-foreground">{issuerDetails.email}</p>
+              {!issuerDetailsConfigured ? (
+                <Button variant="ghost" size="sm" className="bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-700 print:hidden text-sm">
+                  Configure Company Details
+                </Button>
+              ) : (
+                <>
+                  <h2 className="text-xl font-semibold mb-1">{issuerDetails.name}</h2>
+                  <p className="text-sm text-muted-foreground">{issuerDetails.address}</p>
+                  <p className="text-sm text-muted-foreground">{issuerDetails.phone}</p>
+                  <p className="text-sm text-muted-foreground">{issuerDetails.email}</p>
+                </>
+              )}
             </div>
           </div>
 
@@ -224,17 +218,17 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
               <h3 className="text-sm font-semibold text-muted-foreground mb-2">INVOICE DATE</h3>
               {editable ? (
                 <div>
-                <Input
-                  type="date"
-                  value={data.date}
-                  onChange={(e) => handleChange('date', e.target.value)}
-                  className="font-medium ml-auto w-fit border-dashed print:border-none"
-                />
+                  <Input
+                    type="date"
+                    value={data.date}
+                    onChange={(e) => handleChange('date', e.target.value)}
+                    className="font-medium ml-auto w-fit border-dashed print:border-none"
+                  />
                   <Button className="mt-2" onClick={() => {
                     const today = new Date();
                     const month = today.getMonth() + 1;
                     const day = today.getDate();
-                    const date = `${today.getFullYear()}-${(month>9 ? '' : '0') + month}-${(day>9 ? '' : '0') + day}`
+                    const date = `${today.getFullYear()}-${(month>9 ? '' : '0') + month}-${(day>9 ? '' : '0') + day}`;
                     handleChange('date', date);
                   }}>Today</Button>
                 </div>
@@ -249,7 +243,7 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
           </div>
 
           {/* Items Table */}
-          <div className="border-0 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-muted/30 to-muted/10">
+          <div className="border-0 overflow-hidden shadow-lg bg-gradient-to-br from-muted/30 to-muted/10">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-primary/15 to-primary/5">
                 <tr>
@@ -325,16 +319,16 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
                 <tr>
                   {editable && (
                     <td className="p-4" colSpan={5}>
-                    <div className="flex justify-center gap-2 print:hidden">
-                      <Button onClick={addItem} variant="outline">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Article
-                      </Button>
-                      <Button onClick={() => setIsItemDialogOpen(true)} variant="outline">
-                        <Package className="h-4 w-4 mr-2" />
-                        Select Item
-                      </Button>
-                    </div>
+                      <div className="flex justify-center gap-2 print:hidden">
+                        <Button onClick={addItem} variant="outline">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Article
+                        </Button>
+                        <Button onClick={() => setIsItemDialogOpen(true)} variant="outline">
+                          <Package className="h-4 w-4 mr-2" />
+                          Select Item
+                        </Button>
+                      </div>
                     </td>
                   )}
                 </tr>
@@ -350,8 +344,6 @@ export const InvoicePreview = ({ data, issuerDetails, onUpdate, editable = false
               </tfoot>
             </table>
           </div>
-
-
         </div>
       </Card>
 

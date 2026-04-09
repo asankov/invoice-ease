@@ -1,0 +1,15 @@
+{
+  "authKit": {
+    "dev": {
+      "configure": {
+        "redirectUris": ["http://localhost:8080/callback"],
+        "appHomepageUrl": "http://localhost:8080",
+        "corsOrigins": ["http://localhost:8080"]
+      },
+      "localEnvVars": {
+        "VITE_WORKOS_CLIENT_ID": "${authEnv.WORKOS_CLIENT_ID}",
+        "VITE_WORKOS_REDIRECT_URI": "http://localhost:8080/callback"
+      }
+    }
+  }
+}

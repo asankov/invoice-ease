@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,16 +6,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, User } from "lucide-react";
-import { Customer, getDataClient } from "@/client/DataClient";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 interface CustomerSelectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelectCustomer: (customer: Customer) => void;
+  onSelectCustomer: (customer: { name: string; number: string; address: string }) => void;
 }
 
 export const CustomerSelectionDialog = ({
@@ -23,23 +23,16 @@ export const CustomerSelectionDialog = ({
   onOpenChange,
   onSelectCustomer,
 }: CustomerSelectionDialogProps) => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const customers = useQuery(api.customers.list);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    if (open) {
-      const dataClient = getDataClient();
-      setCustomers(dataClient.getCustomerList());
-    }
-  }, [open]);
-
-  const filteredCustomers = customers.filter((customer) =>
+  const filteredCustomers = (customers ?? []).filter((customer) =>
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectCustomer = (customer: Customer) => {
+  const handleSelectCustomer = (customer: { name: string; number: string; address: string }) => {
     onSelectCustomer(customer);
     onOpenChange(false);
     setSearchQuery("");
@@ -75,12 +68,12 @@ export const CustomerSelectionDialog = ({
               ) : (
                 filteredCustomers.map((customer) => (
                   <button
-                    key={customer.id}
-                    className="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-card to-card/50 hover:from-accent/30 hover:to-accent/10 hover:shadow-lg hover:scale-[1.01] transition-all duration-300 group backdrop-blur-sm"
+                    key={customer._id}
+                    className="w-full text-left p-5 bg-gradient-to-br from-card to-card/50 hover:from-accent/30 hover:to-accent/10 hover:shadow-lg hover:scale-[1.01] transition-all duration-300 group backdrop-blur-sm"
                     onClick={() => handleSelectCustomer(customer)}
                   >
                     <div className="flex items-start gap-4 w-full">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary/30 group-hover:to-primary/10 group-hover:scale-110 transition-all duration-300">
+                      <div className="h-12 w-12 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary/30 group-hover:to-primary/10 group-hover:scale-110 transition-all duration-300">
                         <User className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0 pt-0.5">
